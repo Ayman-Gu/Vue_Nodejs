@@ -1,5 +1,12 @@
 <template>
-  <div class="w-full flex flex-col items-center bg-black overflow-hidden">
+  <div class="glow-bubbles-container">
+    <div class="glow"></div>
+    <div v-for="n in 12" :key="n" class="bubble" :style="bubbleStyle(n)"></div>
+  </div>
+  <div class="curve-container bg-black">
+    <div class="default-ltr"></div>
+  </div>
+  <div class="w-full flex flex-col items-center bg-black overflow-hidden " >
     <div>
       <h1 class="text-white text-4xl font-bold drop-shadow-lg text-center mb-10 mt-10">
         Statistics
@@ -64,9 +71,9 @@
 import { ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import { Line } from 'vue-chartjs';
+import '@/assets/styles/statistics.css';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 
-// Register Chart.js components
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 // Chart data
@@ -210,13 +217,71 @@ onMounted(() => {
   if (chartContainer.value) observer.observe(chartContainer.value);
   if (numberContainer.value) observer.observe(numberContainer.value);
 });
-</script>
 
+function bubbleStyle(n) {
+  // Randomize left position, size, delay, and duration
+  const left = Math.random() * 93 + 5; // 5% to 95%
+  const size = Math.random() * 6 + 9; // 8px to 24px
+  const delay = Math.random() * 2; // 0s to 2s
+  const duration = Math.random() * 2 + 2.5; // 2.5s to 4.5s
+  return {
+    left: `${left}%`,
+    width: `${size}px`,
+    height: `${size}px`,
+    animationDelay: `${delay}s`,
+    animationDuration: `${duration}s`,
+  };
+}
+</script>
 <style scoped>
-.container {
+/* Glowing effect and bubbles */
+.glow-bubbles-container {
+  position: absolute;
+  width: 100%;
+  height: 120px;
+  overflow: visible;
+  z-index: 10;
   display: flex;
-  gap: 1rem; 
+  justify-content: center;
+  align-items: flex-start;
+  pointer-events: none;
 }
 
+.glow {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255,180,60,0.7) 0%, rgba(255,140,0,0.3) 60%, transparent 100%);
+  filter: blur(18px);
+  opacity: 0.20;
+  z-index: 1;
+}
 
+.bubble {
+  position: absolute;
+  bottom: 0;
+  background: linear-gradient(135deg, #ffe45d 60%, #f49a1d 100%);
+  border-radius: 90%;
+  opacity: 0.7;
+  z-index: 2;
+  animation: bubbleUp 3.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes bubbleUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.4;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-90px) scale(1.2);
+    opacity: 0;
+  }
+}
 </style>
